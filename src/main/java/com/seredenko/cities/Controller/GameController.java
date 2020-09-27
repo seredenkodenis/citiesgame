@@ -65,9 +65,28 @@ public class GameController {
 
         String lastWord = user.getLastWord().toLowerCase();
 
-        if(word.toLowerCase().charAt(0) != lastWord.charAt(lastWord.length()-1)){
-          return "redirect:/game/uncorrectRule";
+        // we - Ирпень Миоры
+        char lastWordChar = lastWord.toLowerCase().charAt(lastWord.length() - 1);
+
+        System.out.println(lastWordChar!='ы');
+        char PreLastWordChar = lastWord.toLowerCase().charAt(lastWord.length() - 2);
+        if(lastWordChar == 'ы'){
+            if(word.toLowerCase().charAt(0) != PreLastWordChar){
+                System.out.println(2);
+                return "redirect:/game/uncorrectRule";
+            }
+        }else if(lastWordChar == 'ь'){
+            if(word.toLowerCase().charAt(0) != PreLastWordChar){
+                System.out.println(2);
+                return "redirect:/game/uncorrectRule";
+            }
+        }else{
+            if(word.toLowerCase().charAt(0) != lastWordChar){
+                System.out.println(2);
+                return "redirect:/game/uncorrectRule";
+            }
         }
+
 
         //get all cities
         HashMap<String, Boolean> inGame = user.getCities();
@@ -90,12 +109,23 @@ public class GameController {
         //answer from server
         for(Map.Entry<String, Boolean> elem: inGame2){
             //take element and check if it isn't used
-            if((elem.getKey().toLowerCase().charAt(0) == word.charAt(word.length()-1)) && (!elem.getValue())){
-                elem.setValue(true);
-                user.setLastWord(elem.getKey());
-                user.setCities(inGame);
-                userRepository.save(user);
-                return "redirect:/game";
+            char userWordChar = word.toLowerCase().charAt(word.length() - 1);
+            if((userWordChar == 'ь') || (userWordChar == 'ы')){
+                if((elem.getKey().toLowerCase().charAt(0) == word.charAt(word.length()-2)) && (!elem.getValue())){
+                    elem.setValue(true);
+                    user.setLastWord(elem.getKey());
+                    user.setCities(inGame);
+                    userRepository.save(user);
+                    return "redirect:/game";
+                }
+            }else {
+                if ((elem.getKey().toLowerCase().charAt(0) == word.charAt(word.length() - 1)) && (!elem.getValue())) {
+                    elem.setValue(true);
+                    user.setLastWord(elem.getKey());
+                    user.setCities(inGame);
+                    userRepository.save(user);
+                    return "redirect:/game";
+                }
             }
         }
 
